@@ -1,5 +1,5 @@
 package command;
 
 public interface Command {
-    void execute(String []  args, ClientContext clientContext );
+    void execute(Object data, ClientContext clientContext );
 }
