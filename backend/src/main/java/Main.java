@@ -1,5 +1,11 @@
+import command.CommandRegistry;
+import server.MultiServer;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("hello world");
+        CommandRegistry.init();
+
+        MultiServer server = new MultiServer();
+        server.start();
     }
 }
