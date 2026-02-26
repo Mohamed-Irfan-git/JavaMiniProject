@@ -27,9 +27,10 @@ public class AuthService {
 
     // Generate JWT token (private, only called inside authenticate)
     private String generateToken(User user) {
-        long jwtExpirationMs = 24 * 60 * 60 * 1000;
-        String jwtSecret = "a9!B3vK7#hJ2pXz8qL0mT5wRf6Y1uS4d";
 
+
+        String jwtSecret = "a9!B3vK7#hJ2pXz8qL0mT5wRf6Y1uS4d";
+        long jwtExpirationMs = 24 * 60 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole())
