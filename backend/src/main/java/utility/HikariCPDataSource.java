@@ -10,9 +10,9 @@ public class HikariCPDataSource {
 
     private HikariCPDataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://localhost:3307/lms_db");
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/lms_db");
         config.setUsername("root");
-        config.setPassword("root123");
+        config.setPassword("Irfan#@123");
         config.setMaximumPoolSize(20);
         config.setMinimumIdle(2);
         config.setIdleTimeout(30000);
