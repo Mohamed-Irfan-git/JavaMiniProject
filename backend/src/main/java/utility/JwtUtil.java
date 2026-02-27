@@ -3,16 +3,19 @@ package utility;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;
 
 public class JwtUtil {
 
-    // Keep secret in one place
-    private static final String JWT_SECRET = "a9!B3vK7#hJ2pXz8qL0mT5wRf6Y1uS4d";
+    // 256-bit secure key for HS256
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
 
     // Validate token
     public boolean validateToken(String token) {
         try {
-            getAllClaims(token); // will throw if invalid
+            getAllClaims(token); // throws if invalid
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
@@ -29,11 +32,17 @@ public class JwtUtil {
         return getAllClaims(token).get("role", String.class);
     }
 
-    // Central method to parse token
+    // Central parsing method
     private Claims getAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(JWT_SECRET)
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    // Allow AuthService to access the key
+    public static SecretKey getSecretKey() {
+        return SECRET_KEY;
     }
 }

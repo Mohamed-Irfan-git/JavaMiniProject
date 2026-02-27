@@ -2,6 +2,7 @@ package command;
 
 import dao.UserDAO;
 import service.AuthService;
+import service.UserService;
 import utility.HikariCPDataSource;
 
 import java.sql.Connection;
@@ -19,10 +20,21 @@ public class CommandRegistry {
             UserDAO userDAO = new UserDAO(connection);
             AuthService authService = new AuthService(userDAO);
 
-            commands.put("LOGIN", new LoginCommand(authService));
             commands.put("PING", (args, context) ->
                     context.getOutput().println("PONG")
             );
+
+            //login
+            commands.put("LOGIN", new LoginCommand(authService));
+
+            //get all users
+            UserService userService = new UserService(userDAO);
+            commands.put("GetAllUser",new GetAllUsersCommand(userService));
+
+            // create new user
+            commands.put("CreateUser",new CreateUserCommand(userService));
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

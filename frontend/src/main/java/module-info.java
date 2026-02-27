@@ -6,7 +6,8 @@ module com.example.frontend {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;
-    requires org.kordamp.bootstrapfx.core;
+    requires com.fasterxml.jackson.databind;
+
 
     opens com.example.frontend to javafx.fxml;
     exports com.example.frontend;
