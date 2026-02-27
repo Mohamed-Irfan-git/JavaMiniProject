@@ -4,7 +4,7 @@ public class LoginResponseDTO {
     private final boolean success;
     private final String username;
     private final String message;
-    private final String roll;
+    private final String role;
     private final String token;  // new field for JWT
 
     // Private constructor to enforce the use of Builder
@@ -12,7 +12,7 @@ public class LoginResponseDTO {
         this.success = builder.success;
         this.username = builder.username;
         this.message = builder.message;
-        this.roll = builder.roll;
+        this.role = builder.role;
         this.token = builder.token; // assign token
     }
 
@@ -30,7 +30,7 @@ public class LoginResponseDTO {
     }
 
     public String getRoll() {
-        return roll;
+        return role;
     }
 
     public String getToken() {
@@ -42,7 +42,7 @@ public class LoginResponseDTO {
         private boolean success;
         private String username;
         private String message;
-        private String roll;
+        private String role;
         private String token; // builder field for token
 
         public Builder setSuccess(boolean success) {
@@ -60,8 +60,8 @@ public class LoginResponseDTO {
             return this;
         }
 
-        public Builder setRoll(String roll) {
-            this.roll = roll;
+        public Builder setRoll(String role) {
+            this.role = role;
             return this;
         }
 

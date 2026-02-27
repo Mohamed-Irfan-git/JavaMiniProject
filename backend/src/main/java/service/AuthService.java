@@ -3,7 +3,6 @@ package service;
 import dao.UserDAO;
 import model.User;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.util.Date;
 
@@ -25,22 +24,20 @@ public class AuthService {
         return new AuthResult(false, null, null, "Invalid username or password", null);
     }
 
-    // Generate JWT token (private, only called inside authenticate)
+    // Generate JWT token (secure HS256)
     private String generateToken(User user) {
+        long jwtExpirationMs = 24 * 60 * 60 * 1000; // 24 hours
 
-
-        String jwtSecret = "a9!B3vK7#hJ2pXz8qL0mT5wRf6Y1uS4d";
-        long jwtExpirationMs = 24 * 60 * 60 * 1000;
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .signWith(utility.JwtUtil.getSecretKey())
                 .compact();
     }
 
-    // AuthResult wrapper class
+    // AuthResult wrapper
     public static class AuthResult {
         private final boolean success;
         private final String username;
