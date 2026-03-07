@@ -35,6 +35,8 @@ public class UserDAO {
         }
         return null;
     }
+
+
     public List<User> findAllUsers() {
         String sql = "SELECT * FROM users";
         List<User> users = new ArrayList<>();
