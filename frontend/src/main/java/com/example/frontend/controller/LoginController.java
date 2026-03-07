@@ -1,5 +1,6 @@
 package com.example.frontend.controller;
 
+import com.example.frontend.model.User;
 import com.example.frontend.network.ServerClient;
 import com.example.frontend.service.AuthService;
 import com.example.frontend.session.SessionManager;
@@ -20,34 +21,48 @@ public class LoginController {
     @FXML
     public void initialize() {
         usernameField.setOnAction(actionEvent -> passwordField.requestFocus() );
-        // Trigger login when pressing Enter in the password field
         passwordField.setOnAction(event -> login());
     }
 
     @FXML
     public void login() {
-
         try {
             client.connect();
             AuthService authService = new AuthService(client);
 
-            String token = authService.login(
+            User user = authService.login(
                     usernameField.getText(),
                     passwordField.getText()
             );
 
-            if(token != null){
-                SessionManager.setToken(token);
-                System.out.println("Login success!");
-                System.out.println("Token: " + token);
+            if(user != null){
+                // Store token & role in session
+                SessionManager.setToken(user.getToken());
+                SessionManager.setRole(user.getRole());
 
-            }else{
+                System.out.println("Login success!");
+                System.out.println("Token: " + user.getToken());
+                System.out.println("Role: " + user.getRole());
+
+                // Load different pages based on role
+                switch(user.getRole()){
+                    case "Student":
+                        System.out.println("Load Student page");
+                        break;
+                    case "Lecturer":
+                        System.out.println("Load Lecturer page");
+                        break;
+                    case "Admin":
+                        System.out.println("Load Admin page");
+                        break;
+                }
+
+            } else {
                 System.out.println("Login failed");
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
-
     }
 }

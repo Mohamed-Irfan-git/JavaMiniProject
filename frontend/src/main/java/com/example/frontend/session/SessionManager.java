@@ -3,6 +3,7 @@ package com.example.frontend.session;
 public class SessionManager {
 
     private static String token;
+    private static String role;
 
     public static void setToken(String t){
         token = t;
@@ -12,4 +13,11 @@ public class SessionManager {
         return token;
     }
 
+    public static void setRole(String r){
+        role = r;
+    }
+
+    public static String getRole(){
+        return role;
+    }
 }

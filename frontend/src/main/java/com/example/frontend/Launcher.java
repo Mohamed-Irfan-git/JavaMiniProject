@@ -16,8 +16,6 @@ public class Launcher extends Application {
         );
 
         Scene scene = new Scene(loader.load());
-
-        // Remove default OS title bar
         stage.initStyle(StageStyle.UNDECORATED);
 
         stage.setScene(scene);
