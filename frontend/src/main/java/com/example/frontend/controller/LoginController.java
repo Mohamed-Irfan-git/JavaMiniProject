@@ -1,8 +1,10 @@
 package com.example.frontend.controller;
 
+import com.example.frontend.model.Student;
 import com.example.frontend.model.User;
 import com.example.frontend.network.ServerClient;
 import com.example.frontend.service.AuthService;
+import com.example.frontend.service.StudentService;
 import com.example.frontend.session.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +26,9 @@ public class LoginController {
     private PasswordField passwordField;
 
     static final ServerClient client = new ServerClient();
+    public static String username = "";
+    public static String userId= "";
+    public static String reNo = "";
 
     @FXML
     public void initialize() {
@@ -36,6 +41,7 @@ public class LoginController {
         try {
             client.connect();
             AuthService authService = new AuthService(client);
+            StudentService studentService = new StudentService(client);
 
             User user = authService.login(
                     usernameField.getText(),
@@ -46,25 +52,38 @@ public class LoginController {
                 // Store token & role in session
                 SessionManager.setToken(user.getToken());
                 SessionManager.setRole(user.getRole());
+                SessionManager.setUserId(user.getUserId());
 
                 System.out.println("Login success!");
                 System.out.println("Token: " + user.getToken());
                 System.out.println("Role: " + user.getRole());
+                System.out.println("User id : " + user.getUserId());
+
+                LoginController.username = user.getUsername();
+                LoginController.userId = user.getUserId();
+                Student student = studentService.getStudentByUserId(LoginController.userId);
+                if (student != null) {
+                    reNo = student.getRegNo();
+                } else {
+                    reNo = "";
+                    System.out.println("No student found for user_id: " + LoginController.userId);
+                }
 
                 // Load different pages based on role
                 switch(user.getRole()) {
+
                     case "Student":
-                        loadDashboard("/view/studentDashboard.fxml",user.getUsername());
+                        loadDashboard("/view/studentDashboard.fxml",username);
                         break;
                     case "Lecturer":
-                        loadDashboard("/view/lecturerDashboard.fxml",user.getUsername());
+                        loadDashboard("/view/lecturerDashboard.fxml",username);
                         break;
                     case "Tech_Officer":
-                        loadDashboard("/view/techOfficerDashboard.fxml",user.getUsername());
+                        loadDashboard("/view/techOfficerDashboard.fxml",username);
                         break;
                     case "Admin":
                     case "Dean":
-                        loadDashboard("/view/adminDashboard.fxml",user.getUsername());
+                        loadDashboard("/view/adminDashboard.fxml",username);
                         break;
                     default:
                         System.out.println("Unknown role: access denied");
@@ -90,8 +109,6 @@ public class LoginController {
             dashboardStage.show();
 
             // Close the login stage
-            AdminDashboardController controller = loader.getController();
-            controller.setAdminName(username);
             Stage loginStage = (Stage) usernameField.getScene().getWindow();
             loginStage.close();
 

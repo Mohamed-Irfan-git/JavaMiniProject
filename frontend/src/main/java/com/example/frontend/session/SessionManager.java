@@ -4,6 +4,7 @@ public class SessionManager {
 
     private static String token;
     private static String role;
+    private static String userId;
 
     public static void setToken(String t){
         token = t;
@@ -25,5 +26,13 @@ public class SessionManager {
         SessionManager.token = "";
         SessionManager.role = "";
 
+    }
+
+    public static String getUserId() {
+        return userId;
+    }
+
+    public static void setUserId(String userId) {
+        SessionManager.userId = userId;
     }
 }

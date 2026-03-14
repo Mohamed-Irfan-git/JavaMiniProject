@@ -1,95 +1,180 @@
 package com.example.frontend.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Insets;
 
-public class StudentDashboardController {
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
 
-    @FXML
-    private Label cgpaLabel;
+public class StudentDashboardController implements Initializable {
 
-    @FXML
-    private VBox coursesContainer;
+    @FXML private Label welcomeLabel;
+    @FXML private Label dateLabel;
+    @FXML private Label studentNameLabel;
+    @FXML private Label studentIdLabel;
+    @FXML private Label overallAttendanceLabel;
+    @FXML private Label sgpaLabel;
+    @FXML private Label cgpaLabel;
+    @FXML private Label enrolledCoursesLabel;
+    @FXML private Label eligibilityStatusLabel;
+    @FXML private Label statusBarTime;
+    @FXML private VBox coursesContainer;
+    @FXML private VBox noticesContainer;
+    @FXML private HBox eligibilityAlertBox;
 
-    @FXML
-    private Label dateLabel;
+    private String studentName = LoginController.username;
+    private String studentRegNo = LoginController.reNo;
+    private String studentId = LoginController.userId;
 
-    @FXML
-    private HBox eligibilityAlertBox;
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        String today = LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"));
+        dateLabel.setText(today + "  •  Undergraduate Portal");
+        statusBarTime.setText(LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("d MMMM yyyy")));
 
-    @FXML
-    private Label eligibilityStatusLabel;
+        welcomeLabel.setText("Welcome back, " + studentName + "! 👋");
+        studentNameLabel.setText(studentName);
+        studentIdLabel.setText("Reg No: " + studentRegNo);
 
-    @FXML
-    private Label enrolledCoursesLabel;
+        loadStats();
+        loadCourses();
+        loadNotices();
+        checkEligibility();
+    }
 
-    @FXML
-    private VBox noticesContainer;
-
-    @FXML
-    private Label overallAttendanceLabel;
-
-    @FXML
-    private Label sgpaLabel;
-
-    @FXML
-    private Label statusBarTime;
-
-    @FXML
-    private Label studentIdLabel;
-
-    @FXML
-    private Label studentNameLabel;
-
-    @FXML
-    private Label welcomeLabel;
-
-    @FXML
-    void logout(ActionEvent event) {
+    public void setStudentInfo(String name, String regNo) {
+        this.studentName = name;
+        this.studentRegNo = regNo;
 
     }
 
-    @FXML
-    void openAttendance(ActionEvent event) {
+    // ─── DB Methods ──────────────────────────────────────────────────────────
 
+    private void loadStats() {
+        // TODO: replace with DB queries for this student
+        overallAttendanceLabel.setText("87%");
+        sgpaLabel.setText("3.45");
+        cgpaLabel.setText("3.28");
+        enrolledCoursesLabel.setText("4");
     }
 
-    @FXML
-    void openCourses(ActionEvent event) {
-
+    private void checkEligibility() {
+        // TODO: real eligibility check (attendance ≥ 80% AND CA ≥ 40%)
+        // Example: all eligible
+        boolean eligible = true;
+        if (eligible) {
+            eligibilityAlertBox.setStyle(
+                    "-fx-background-color: #162040; -fx-background-radius: 10; " +
+                            "-fx-border-color: #28a745; -fx-border-radius: 10; -fx-border-width: 1;");
+            eligibilityStatusLabel.setText(
+                    "✅  You are eligible for all final examinations. (CA ≥ 40% & Attendance ≥ 80%)");
+        } else {
+            eligibilityAlertBox.setStyle(
+                    "-fx-background-color: #162040; -fx-background-radius: 10; " +
+                            "-fx-border-color: #c0392b; -fx-border-radius: 10; -fx-border-width: 1;");
+            eligibilityStatusLabel.setText(
+                    "❌  You are NOT eligible for one or more exams. Check attendance or CA marks.");
+        }
     }
 
-    @FXML
-    void openEligibility(ActionEvent event) {
+    private void loadCourses() {
+        // TODO: replace with DB query
+        String[][] courses = {
+                {"ICT2112", "Object Oriented Programming", "3", "B+"},
+                {"ICT2132", "OOP Practicum",               "2", "A"},
+                {"ICT2142", "Data Structures",              "3", "B"},
+                {"ICT2152", "Web Technologies",             "3", "A-"},
+        };
 
+        for (String[] c : courses) {
+            coursesContainer.getChildren().add(buildCourseRow(c[0], c[1], c[2], c[3]));
+        }
     }
 
-    @FXML
-    void openGrades(ActionEvent event) {
+    private HBox buildCourseRow(String code, String name, String credits, String grade) {
+        HBox row = new HBox(0);
+        row.setStyle("-fx-background-color: #1a2d50; -fx-background-radius: 6;");
+        row.setPadding(new Insets(10, 12, 10, 12));
 
+        Label codeLbl    = new Label(code);    codeLbl.setPrefWidth(110);
+        Label nameLbl    = new Label(name);    nameLbl.setPrefWidth(200);
+        Label credLbl    = new Label(credits); credLbl.setPrefWidth(70);
+        Label gradeLbl   = new Label(grade);   gradeLbl.setPrefWidth(70);
+
+        String base = "-fx-text-fill: #d0e4ff; -fx-font-size: 12px;";
+        codeLbl.setStyle(base); nameLbl.setStyle(base); credLbl.setStyle(base);
+        gradeLbl.setStyle("-fx-text-fill: #a8e6cf; -fx-font-size: 12px; -fx-font-weight: bold;");
+
+        row.getChildren().addAll(codeLbl, nameLbl, credLbl, gradeLbl);
+        return row;
     }
 
-    @FXML
-    void openMedical(ActionEvent event) {
+    private void loadNotices() {
+        // TODO: replace with DB query
+        String[][] notices = {
+                {"📢", "Mid-Semester Exam Schedule Released", "2026-03-10"},
+                {"📢", "Lab Maintenance – 15 March",         "2026-03-08"},
+                {"📢", "Semester Registration Deadline",      "2026-03-05"},
+        };
 
+        for (String[] n : notices) {
+            noticesContainer.getChildren().add(buildNoticeItem(n[0], n[1], n[2]));
+        }
     }
 
-    @FXML
-    void openNotices(ActionEvent event) {
+    private VBox buildNoticeItem(String icon, String title, String date) {
+        VBox item = new VBox(4);
+        item.setStyle("-fx-background-color: #1e3c72; -fx-background-radius: 8;");
+        item.setPadding(new Insets(12, 16, 12, 16));
 
+        Label titleLbl = new Label(icon + "  " + title);
+        titleLbl.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;");
+        titleLbl.setWrapText(true);
+
+        Label dateLbl = new Label(date);
+        dateLbl.setStyle("-fx-text-fill: #6a90c8; -fx-font-size: 10px;");
+
+        item.getChildren().addAll(titleLbl, dateLbl);
+        return item;
     }
 
-    @FXML
-    void openProfile(ActionEvent event) {
+    // ─── Navigation ──────────────────────────────────────────────────────────
 
+    @FXML private void openCourses()    { loadView("StudentCourses.fxml"); }
+    @FXML private void openAttendance() { loadView("StudentAttendance.fxml"); }
+    @FXML private void openMedical()    { loadView("StudentMedical.fxml"); }
+    @FXML private void openGrades()     { loadView("StudentGrades.fxml"); }
+    @FXML private void openTimetable()  { loadView("StudentTimetable.fxml"); }
+    @FXML private void openNotices()    { loadView("NoticesView.fxml"); }
+    @FXML private void openEligibility(){ loadView("StudentEligibility.fxml"); }
+    @FXML private void openProfile()    { loadView("StudentProfile.fxml"); }
+    @FXML private void logout()         { loadView("Login.fxml"); }
+
+    private void loadView(String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/frontend/view/" + fxmlFile));
+            Parent root = loader.load();
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-    @FXML
-    void openTimetable(ActionEvent event) {
-
-    }
-
 }

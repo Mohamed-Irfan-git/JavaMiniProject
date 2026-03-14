@@ -10,6 +10,7 @@ public class ClientContext {
     private String username;
     private String role;
     private String token;
+    private String userId;
 
     public ClientContext(PrintWriter output) {
         this.output = output;
@@ -28,4 +29,12 @@ public class ClientContext {
 
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

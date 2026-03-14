@@ -5,60 +5,138 @@ import com.example.frontend.session.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
 import javafx.stage.StageStyle;
 
-public class AdminDashboardController {
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
+
+public class AdminDashboardController implements Initializable {
+
+    @FXML private Label welcomeLabel;
+    @FXML private Label dateLabel;
+    @FXML private Label adminNameLabel;
+    @FXML private Label totalUsersLabel;
+    @FXML private Label totalStudentsLabel;
+    @FXML private Label totalLecturersLabel;
+    @FXML private Label totalTechLabel;
+    @FXML private Label totalCoursesLabel;
+    @FXML private Label statusBarTime;
+    @FXML private VBox noticesContainer;
+
+    // Holds the logged-in admin's name (set by LoginController before loading)
+    private final String adminName = LoginController.username;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Set date
+        String today = LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"));
+        dateLabel.setText(today + "  •  Admin Control Panel");
+        statusBarTime.setText(LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("d MMMM yyyy")));
+
+        // Welcome
+        welcomeLabel.setText("Welcome back, " + adminName + " 👋");
+        adminNameLabel.setText(adminName);
+
+        // Load stats from DB
+        loadStats();
+
+        // Load recent notices
+        loadRecentNotices();
+    }
+
+
+
+    // ─── DB Methods (replace with real DB calls) ──────────────────────────────
+
+    private void loadStats() {
+        // TODO: replace with actual DB queries
+        totalUsersLabel.setText("30");
+        totalStudentsLabel.setText("20");
+        totalLecturersLabel.setText("5");
+        totalTechLabel.setText("4");
+        totalCoursesLabel.setText("8");
+    }
+
+    private void loadRecentNotices() {
+        // TODO: replace with actual DB query — show last 3 notices
+        String[][] sampleNotices = {
+                {"Mid-Semester Exam Schedule Released", "2026-03-10"},
+                {"Lab Maintenance – Labs closed on 15 March", "2026-03-08"},
+                {"Semester Registration Deadline Reminder", "2026-03-05"}
+        };
+
+        for (String[] notice : sampleNotices) {
+            noticesContainer.getChildren().add(buildNoticeRow(notice[0], notice[1]));
+        }
+    }
+
+    private HBox buildNoticeRow(String title, String date) {
+        HBox row = new HBox(12);
+        row.setStyle("-fx-background-color: #1e3c72; -fx-background-radius: 8;");
+        row.setPadding(new Insets(12, 16, 12, 16));
+
+        Label icon = new Label("📢");
+        icon.setStyle("-fx-font-size: 14px;");
+
+        VBox text = new VBox(3);
+        Label titleLbl = new Label(title);
+        titleLbl.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;");
+        Label dateLbl = new Label(date);
+        dateLbl.setStyle("-fx-text-fill: #6a90c8; -fx-font-size: 11px;");
+        text.getChildren().addAll(titleLbl, dateLbl);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        row.getChildren().addAll(icon, text, spacer);
+        return row;
+    }
+
+    // ─── Navigation Handlers ─────────────────────────────────────────────────
 
     @FXML
-    private Label adminNameLabel;
+    private void openUsers() {
+        loadView("UserManagement.fxml");
+    }
 
     @FXML
-    private Label dateLabel;
+    private void openAddUser() {
+        loadView("AddUser.fxml");
+    }
 
     @FXML
-    private Button navCourses;
+    private void openCourses() {
+        loadView("CourseManagement.fxml");
+    }
 
     @FXML
-    private Button navDashboard;
+    private void openNotices() {
+        loadView("NoticeManagement.fxml");
+    }
 
     @FXML
-    private Button navNotices;
+    private void openTimetables() {
+        loadView("TimetableManagement.fxml");
+    }
 
     @FXML
-    private Button navTimetables;
-
-    @FXML
-    private Button navUsers;
-
-    @FXML
-    private VBox noticesContainer;
-
-    @FXML
-    private Label statusBarTime;
-
-    @FXML
-    private Label totalCoursesLabel;
-
-    @FXML
-    private Label totalLecturersLabel;
-
-    @FXML
-    private Label totalStudentsLabel;
-
-    @FXML
-    private Label totalTechLabel;
-
-    @FXML
-    private Label totalUsersLabel;
-
-    @FXML
-    private Label welcomeLabel;
+    private void openReports() {
+        loadView("Reports.fxml");
+    }
 
     @FXML
     void logout(ActionEvent event) {
@@ -96,41 +174,19 @@ public class AdminDashboardController {
         }
     }
 
-    @FXML
-    void openAddUser(ActionEvent event) {
 
+    // ─── Helper ──────────────────────────────────────────────────────────────
+
+    private void loadView(String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/frontend/view/" + fxmlFile));
+            Parent root = loader.load();
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-    @FXML
-    void openCourses(ActionEvent event) {
-
-    }
-
-    @FXML
-    void openNotices(ActionEvent event) {
-
-    }
-
-    @FXML
-    void openReports(ActionEvent event) {
-
-    }
-
-    @FXML
-    void openTimetables(ActionEvent event) {
-
-    }
-
-    @FXML
-    void openUsers(ActionEvent event) {
-
-    }
-
-    // In AdminDashboardController.java
-    public void setAdminName(String name) {
-        adminNameLabel.setText(name);
-        welcomeLabel.setText("Welcome back, " + name + " 👋");
-    }
-
-
 }

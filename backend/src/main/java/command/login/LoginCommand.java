@@ -20,30 +20,37 @@ public class LoginCommand implements Command {
     @Override
     public void execute(Object data, ClientContext context) {
         try {
-            //  Convert request JSON to LoginRequestDTO
+
+            // Convert JSON request to DTO
             LoginRequestDTO loginDTO = mapper.convertValue(data, LoginRequestDTO.class);
 
-            // Authenticate user and get AuthResult (includes JWT token)
-            AuthResult result = authService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
+            // Authenticate user
+            AuthResult result = authService.authenticate(
+                    loginDTO.getUsername(),
+                    loginDTO.getPassword()
+            );
 
-            // Store token and user info in ClientContext for later use
+            // Store session data
             if (result.isSuccess()) {
-                context.setToken(result.getToken());      // store token for session
-                context.setUsername(result.getUsername()); // optional, useful for logging
-                context.setRole(result.getRole());        // optional, useful for role-based commands
+                context.setToken(result.getToken());
+                context.setUsername(result.getUsername());
+                context.setRole(result.getRole());
+                context.setUserId(result.getUserId());
             }
 
-            // Build response including JWT token
+            // Build response
             LoginResponseDTO response = new LoginResponseDTO.Builder()
                     .setSuccess(result.isSuccess())
                     .setUsername(result.getUsername())
-                    .setRoll(result.getRole())
+                    .setRole(result.getRole())
                     .setMessage(result.getMessage())
                     .setToken(result.getToken())
+                    .setUserId(result.getUserId())
                     .build();
 
-            // Send JSON response to frontend
+            // Send response to frontend
             String jsonResponse = mapper.writeValueAsString(response);
+            System.out.println(jsonResponse);
             context.getOutput().println(jsonResponse);
 
         } catch (Exception e) {

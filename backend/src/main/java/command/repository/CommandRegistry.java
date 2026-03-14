@@ -2,11 +2,14 @@ package command.repository;
 
 import command.login.LoginCommand;
 import command.login.LogoutCommand;
+import command.student.GetStudentByUserIdCommand;
 import command.user.CreateUserCommand;
 import command.user.GetAllUsersCommand;
 import command.user.GetUserByIdCommand;
+import dao.StudentDAO;
 import dao.UserDAO;
 import service.AuthService;
+import service.StudentService;
 import service.UserService;
 import utility.HikariCPDataSource;
 
@@ -35,9 +38,16 @@ public class CommandRegistry {
 
             // users related
             UserService userService = new UserService(userDAO);
+
+
             commands.put("GetAllUser",new GetAllUsersCommand(userService,authService));
             commands.put("CreateUser",new CreateUserCommand(userService,authService));
             commands.put("GetUserById", new GetUserByIdCommand(userService, authService));
+
+            // student related
+            StudentDAO studentDAO = new StudentDAO(connection);
+            StudentService studentService = new StudentService(studentDAO);
+            commands.put("GET_STUDENT_BY_USER_ID",new GetStudentByUserIdCommand(studentService));
 
 
 

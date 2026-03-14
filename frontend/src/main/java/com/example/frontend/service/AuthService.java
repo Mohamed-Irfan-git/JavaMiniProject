@@ -31,7 +31,7 @@ public class AuthService {
 
             String role = node.has("role") ? node.get("role").asText() : "";
             String token = node.has("token") ? node.get("token").asText() : "";
-            String userId = node.has("user_id") ? node.get("user_id").asText() : "";
+            String userId = node.has("userId") ? node.get("userId").asText() : "";
 
 
             User user = new User(userId, username, "", role);
